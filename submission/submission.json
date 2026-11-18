@@ -1,12 +1,16 @@
 {
-  "team": "",
-  "members": [],
-  "incident": "",
-  "decision_v1": "",
-  "decision_v2": "",
+  "team": "K5-L3A-DAY10-NoName-PoCtoPilotGate1",
+  "members": [
+    "LeQuangTruong-2A202603663",
+    "HoangDangKien-2A202603636",
+    "MaiVanThanh-2A202603696"
+  ],
+  "incident": "S7",
+  "decision_v1": "Thu hẹp",
+  "decision_v2": "Tiếp tục",
   "three_lines": {
-    "environment_assumption": "",
-    "reduce_or_prevent": "",
-    "measure_in_pilot": ""
+    "environment_assumption": "Cổng gửi hãng của đội tin rằng dữ liệu hệ thống là sạch và đúng: trường `district` trong `orders[].recipient` chỉ chứa tên quận, `delay_cause` do tài xế hoặc kho nhập là đúng nguyên nhân, và danh sách `carrier_notice_fields` trong chính sách khớp với điều khoản dữ liệu trong hợp đồng và luật; ngoài thực tế nhân viên có thể nhập lẫn số điện thoại vào ô địa chỉ, chọn `CARRIER` cho nhanh dù trễ do bão, và Pháp chế còn chưa xác nhận căn cứ pháp lý cụ thể.",
+    "reduce_or_prevent": "Với kênh gửi hãng, cổng code NGĂN được tác hại của thẻ S7, vì nó không dò tìm số điện thoại mà dựng lại toàn bộ tin gửi hãng từ dữ liệu hệ thống và chỉ cho đi bốn trường `order_id`, `parcel_id`, `district`, `delay_days`, nên khách viết gì hay trợ lý thêm trường gì cũng không lọt ra ngoài (lộ dữ liệu 30 → 0 trên cả 8/8 ticket, không chặn oan mã vận đơn ở `S7-05`); còn lớp danh sách cấm trong `legal`, quy trình tắt công tắc và báo Pháp chế chỉ GIẢM, vì chúng phụ thuộc tên trường đã biết và con người chỉ biết sau khi có phản ánh, và cả hệ thống vẫn không ngăn được nếu chính dữ liệu nguồn chứa sẵn thông tin cá nhân.",
+    "measure_in_pilot": "Đo lại trên lưu lượng thật ở mọi kho trong pilot: tỉ lệ ticket mà khách tự ghi thông tin cá nhân của người nhận (`pii_toward_carrier_rate`, hôm nay 0,7143 trên gói S7) và số lần cổng phải bỏ trường; tỉ lệ `district` và `delay_cause` bị nhập sai hoặc lẫn thông tin cá nhân (kiểm mẫu với tracking và với người nhận); chi phí mỗi ticket và ROI với LLM thật thay MockLLM (hôm nay 4.456–5.005đ, ROI 1,0–1,24); và tỉ lệ chuyển người, thời gian chờ trong giờ cao điểm với 1 người trực."
   }
 }
