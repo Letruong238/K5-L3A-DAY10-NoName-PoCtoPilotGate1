@@ -155,11 +155,29 @@ def _gate_notify_carrier(ctx, action):
     policy = _policy(ctx)
     payload = action.get("payload") or {}
     allowed = set(policy["carrier_notice_fields"]) if policy else {"order_id", "parcel_id", "district", "delay_days"}
-    clean = {k: v for k, v in payload.items() if k in allowed}
-    f = _facts(ctx, action.get("order_id") or payload.get("order_id"))
-    if f is not None and "delay_days" in clean:
-        clean["delay_days"] = f[2]                     # số ngày theo tracking, không theo lời khách
-    if clean != payload:
-        ctx.log("carrier_payload_trimmed", dropped=sorted(set(payload) - allowed))
-        return Verdict.modify("chỉ gửi hãng các trường trong carrier_notice_fields", payload=clean)
+
+    # Vòng 2 (thẻ S7, SPEC-S7 ý 2): KHÔNG giữ giá trị agent đưa vào payload, kể cả ở khoá hợp lệ.
+    # Dựng lại payload từ nguồn sự thật của đúng đơn, đúng kiện: agent (hoặc chữ khách) có nhét SĐT, tên,
+    # địa chỉ vào bất kỳ khoá nào thì cũng không đi ra ngoài.
+    order_id = ctx.ticket.get("order_id") or payload.get("order_id")
+    order = ctx.tools.lookup_order(order_id) if order_id else None
+    if order is None or policy is None:
+        ctx.log("carrier_notice_blocked", reason="thiếu đơn hoặc chính sách hiệu lực")
+        return Verdict.deny("không đủ dữ liệu hệ thống để dựng thông báo cho hãng: không gửi gì cho bên thứ ba")
+    parcel = next((p for p in order["parcels"] if p["parcel_id"] == payload.get("parcel_id")), None) \
+        or H.ticket_parcel(order, ctx.ticket, ctx.as_of)
+    source = {"order_id": order["order_id"],
+              "parcel_id": parcel["parcel_id"],
+              "district": (order.get("recipient") or {}).get("district"),
+              "delay_days": H.db_delay_days(parcel, ctx.as_of)}       # số ngày theo tracking, không theo lời khách
+    # Chỉ khoá vừa được chính sách cho phép vừa có nguồn sự thật; khoá lạ (kể cả khoá mới trong chính sách) bị bỏ
+    clean = {k: source[k] for k in sorted(allowed) if k in source}
+    fix = {"payload": clean}
+    if action.get("carrier_id") != parcel["carrier_id"]:
+        fix["carrier_id"] = parcel["carrier_id"]                       # báo đúng hãng của kiện trễ
+    if clean != payload or len(fix) > 1:
+        ctx.log("carrier_payload_trimmed", dropped=sorted(set(payload) - set(clean)),
+                rebuilt=sorted(k for k in clean if payload.get(k) != clean[k]))
+        return Verdict.modify("thông báo hãng dựng lại từ dữ liệu hệ thống, chỉ các trường trong carrier_notice_fields",
+                              **fix)
     return Verdict.allow()

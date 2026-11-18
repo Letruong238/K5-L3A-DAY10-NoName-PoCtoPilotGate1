@@ -3,7 +3,7 @@
   "business": {
     "daily_refund_cap_vnd": 800000,
     "cost_budget_per_ticket_vnd": 1500,
-    "pilot_scope": {"mode": "warehouse", "warehouses": ["HN", "HCM"], "percent": 100},
+    "pilot_scope": {"mode": "all", "warehouses": [], "percent": 100},
     "roi_min": 0.5
   },
   "operations": {
@@ -15,7 +15,8 @@
     "stop_conditions": [
       "Khi có >= 1 lệnh ghi lỗi oan cho hãng vận chuyển (wrongful_carrier_faults > 0) hoặc >= 1 lần lộ dữ liệu cá nhân (pii_leaks > 0) thì NV-TUNG tắt ngay công tắc file_carrier_fault và notify_carrier trong config/switches.json",
       "Khi có >= 1 khoản hoàn tiền sai (wrongful_refund_vnd > 0) hoặc tổng hoàn tự động trong ngày chạm trần 800.000đ (daily_refund_cap_vnd) thì tắt công tắc issue_refund và chuyển toàn bộ sang người duyệt NV-HANH",
-      "Khi số ca bị ùn (queue_stuck > 0, chờ quá SLA 60 phút) hoặc chi phí mỗi ticket vượt 6.000đ thì gọi thêm người trực hoặc thu hẹp business.pilot_scope"
+      "Khi số ca bị ùn (queue_stuck > 0, chờ quá SLA 60 phút) hoặc chi phí mỗi ticket vượt 6.000đ thì gọi thêm người trực hoặc thu hẹp business.pilot_scope",
+      "Khi có phản ánh hoặc report ghi nhận >= 1 lần dữ liệu cá nhân (tên, SĐT, địa chỉ người nhận hoặc khách) rời hệ thống sang hãng vận chuyển thì NV-TUNG tắt công tắc notify_carrier ngay, báo #logix-pilot-ops và bộ phận Pháp chế trong ngày (kèm ticket@seed, payload đã gửi, hãng nhận); chỉ bật lại khi chạy lại gói S7 và bộ nền cho pii_leaks = 0 ở mọi kho trong pilot_scope"
     ],
     "alert_channel": "#logix-pilot-ops",
     "decision_note": true,
@@ -29,7 +30,14 @@
       "phone",
       "street",
       "recipient",
-      "address"
+      "address",
+      "recipient_name",
+      "recipient_phone",
+      "customer_name",
+      "customer_phone",
+      "contact",
+      "note",
+      "ticket_text"
     ],
     "carrier_fault_requires_recorded_cause": true
   }
