@@ -50,12 +50,12 @@ trợ lý có đang gây thiệt hại cho bên ngoài LogiX không; không có 
 
 | | Offline, cho MỘT bước (câu 1.3) | Telemetry production (câu 1.4) |
 |---|---|---|
-| **Bước / hành vi được đo** | | |
-| **Thước đo** (một câu, có đơn vị) | | |
-| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | | |
-| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | | |
+| **Bước / hành vi được đo** | Bước "chọn chính sách": agent chọn phiên bản chính sách hoàn tiền (REFUND-v2/v3/v4…) để tính tiền | |
+| **Thước đo** (một câu, có đơn vị) | Tỉ lệ (%) lần chạy mà `policy_id` agent dùng khác phiên bản chính sách có hiệu lực vào ngày `as_of` | |
+| **Dữ liệu** (lấy ở đâu, bao nhiêu, ai gán nhãn) | Sự kiện `policy.policy_id` trong `runs/<mã lần chạy>/traces/`, bộ nền 22 ticket × 5 seed = 110 lần chạy. Nhãn tự động, không cần người gán: đáp án đúng là `helpers.effective_policy(policies, as_of)` đọc từ bảng `policies` trong `data/world.json` (nguồn sự thật, theo `effective_from`/`effective_to`, không theo cờ `index_active`) | |
+| **Cách tính** (công thức, mẫu số, cách xử lý ca thiếu dữ liệu) | Số lần chạy có `policy_id ≠ effective_policy(...).policy_id` ÷ số lần chạy có sự kiện `policy`. Lần chạy dừng trước bước này (bị chặn ở `pre_guard`, chuyển người duyệt sớm, lỗi LLM) bị loại khỏi mẫu số và đếm riêng thành một dòng "không tới bước chọn chính sách" | |
 | **Khung thời gian / ngưỡng báo động** | (không áp dụng) | |
-| **Điểm mù** (thước đo này KHÔNG thấy gì) | | |
+| **Điểm mù** (thước đo này KHÔNG thấy gì) | Không thấy lỗi khi chính bảng `policies` nhập sai ngày hiệu lực; không thấy trường hợp chọn đúng chính sách nhưng tính sai tiền hoặc sai độ trễ ở bước sau | |
 
 **Ví dụ mẫu (bước "chọn độ trễ" của agent, đừng chép):**
 Thước đo: tỉ lệ lần chạy mà độ trễ agent dùng để tính tiền khác độ trễ theo tracking DB. Dữ liệu: sự kiện `proposal.delay_days_used`
