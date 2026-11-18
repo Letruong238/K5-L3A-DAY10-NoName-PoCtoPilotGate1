@@ -5,7 +5,7 @@
 - Tên nhóm: NoName
 - Lớp: L3A
 - Repo của bàn:https://github.com/Letruong238/K5-L3A-DAY10-NoName-PoCtoPilotGate1
-- Thẻ sự cố đã bốc (S1–S8):
+- Thẻ sự cố đã bốc (S1–S8): S7
 
 ## Thành viên
 
