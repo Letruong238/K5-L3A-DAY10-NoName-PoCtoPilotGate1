@@ -26,8 +26,8 @@ rồi mới chạy đánh giá. Khối 1 không sửa code.
 
 ### Câu 1.2 · Mục tiêu nhìn từ hai người
 
-- Chị Oanh, kế toán đối soát (không dùng trợ lý, nhưng phải khớp sổ với hãng và shop mỗi tuần): …
-- Chị Hạnh, trưởng ca CSKH (phải duyệt những ca trợ lý chuyển sang): …
+- Chị Oanh, kế toán đối soát (không dùng trợ lý, nhưng phải khớp sổ với hãng và shop mỗi tuần): Mọi bút toán hoàn tiền trên sổ cái (`ledger`) và phiếu phạt hãng (`carrier_fault`) do trợ lý ghi phải **khớp 100% với chứng từ gốc** (độ trễ thực tế trong tracking DB, đúng chính sách đang hiệu lực `REFUND-v3`, không hoàn trùng đơn đã có trong sổ cái, tổng hoàn tự động trong ngày không vượt ngân sách `2.000.000đ`), có căn cứ rõ ràng (`basis = policy` hoặc `approval_id` hợp lệ), và **không ghi lỗi oan cho hãng vận chuyển** (chỉ ghi khi `delay_cause = CARRIER`) để cuối tuần đối soát công nợ với các hãng (`GHSH`, `VNX`, `MKD`, `DNB`) và shop khớp ngay, không phát sinh tranh chấp phạt oan (80.000đ–150.000đ/lỗi) hay phải làm bút toán điều chỉnh thủ công.
+- Chị Hạnh, trưởng ca CSKH (phải duyệt những ca trợ lý chuyển sang): Trợ lý chỉ chuyển sang hàng chờ người duyệt (`escalate`) **đúng các ca vượt ngưỡng an toàn** (khoản hoàn vượt hạn mức tự động `200.000đ`/đơn của `REFUND-v3`, vượt trần `300.000đ`/khách/ngày, từ lỗi thứ 3 của cùng một hãng trong ngày, hoặc dữ kiện ticket mâu thuẫn với hệ thống) với lưu lượng nằm trong công suất trực (`6 ca/người/giờ`, không để ticket chờ quá SLA `60 phút`); đồng thời mỗi quyết định tự động phải kèm **ghi chú giải thích (`decision_note = true`)** và kiểm tra chặt `approval_id` (đúng người duyệt đứng tên `NV-HANH`, `status = valid`, còn hạn `expires_at`, khớp `ticket_id`/`order_id`) để đội CSKH tin tưởng chuyển sang kiểm mẫu (`>= 10%`, chỉ tốn `0,4 ca`/lần kiểm) thay vì phải tự đọc và kiểm lại bằng tay toàn bộ.
 
 ---
 
