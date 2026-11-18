@@ -323,10 +323,10 @@ Mỗi con số kèm một câu lý do, lấy từ `data/world.json` → `ops_lim
 
 | Khoá | Giá trị bàn đặt | Lý do (một câu, có số) |
 |---|---|---|
-| `business.daily_refund_cap_vnd` | | |
-| `business.cost_budget_per_ticket_vnd` | | |
-| `business.pilot_scope` (all / warehouse / percent) | | |
-| `business.roi_min` | | |
+| `business.daily_refund_cap_vnd` | `800000` | Finance chỉ cho tổng hoàn tự động **2.000.000đ/ngày cho cả mạng 5 kho** (`ops_limits.daily_auto_refund_budget_vnd`); pilot chỉ chạy 2 kho nên nhận phần tương ứng 2/5 × 2.000.000đ = **800.000đ**. Mốc base hoàn tự động nhiều nhất 155.000đ/ngày, nên trần còn dư khoảng 5 lần, không chặn ca đúng; khoản nào làm vượt trần thì không ghi mà chuyển `NV-HANH` duyệt. |
+| `business.cost_budget_per_ticket_vnd` | `1500` | Đúng trần tiền LLM mỗi ticket đã thống nhất với Ops và Finance (`ops_limits.max_llm_cost_per_ticket_vnd = 1.500đ`). Theo bảng giá `ops_facts.llm_cost`, ticket dài nhất của bộ nền (86 ký tự) chỉ tốn khoảng 200 + 150 + 21 + 200 + 100 + 100 ≈ 770đ, nên ticket bình thường không bị chặn; chỉ ticket dài bất thường (dán cả đoạn văn, chèn chỉ thị) mới chạm trần và được chuyển cho người, thay vì đốt tiền máy. |
+| `business.pilot_scope` (all / warehouse / percent) | `{"mode": "warehouse", "warehouses": ["HN", "HCM"]}` | Đề cho pilot ở **2 depot**; chọn **HN và HCM** vì có nhiều ticket nhất (7 + 5 = 12/22 ticket bộ nền, khoảng 55% lượng việc), đều là đơn lẻ của khách cá nhân, và trên mốc after cả hai đã đạt pass_rate 1,0. **Không chọn** `DN`, `CT` vì mùa mưa bão làm tăng ca `FORCE_MAJEURE` và `delay_cause` nhập tay dễ sai (bản đồ dữ liệu B3); **không chọn** `HCM-B2B` vì mỗi đơn từ 2 triệu, vượt xa hạn mức tự hoàn 200.000đ của `REFUND-v3`. Ticket ngoài phạm vi vẫn làm tay như cũ (10.000đ/ticket theo `ops_facts.manual_cost_per_ticket_vnd`). |
+| `business.roi_min` | `0.5` | Khớp `roi_min = 0,5` trong Bản tiêu chí đã ký: làm tay tốn 10.000đ/ticket (`ops_facts.manual_cost_per_ticket_vnd`), mỗi ca chuyển người tốn thêm 10.000đ (`review_cost_per_ticket_vnd`) và mỗi người trực tốn 30.000đ/ca phí giữ chỗ (`reviewer_standby_fee_vnd`); ROI dưới 0,5 thì chỉ cần vài ca chuyển người là trợ lý hết lời so với làm tay. Mốc base đạt ROI 1,34, mốc after 1,38. |
 
 ### B7.5 · Câu 2.10 · Cổng con người, vận hành, pháp lý + Runbook phần 1–3
 
