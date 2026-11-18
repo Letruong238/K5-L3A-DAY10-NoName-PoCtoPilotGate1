@@ -20,7 +20,9 @@ rồi mới chạy đánh giá. Khối 1 không sửa code.
 
 ### Câu 1.1 · Một mục tiêu cấp hệ thống (khác "model trả lời đúng")
 
-> …
+> Với mọi ticket hoàn tiền giao trễ trong phạm vi pilot, **cả luồng** đọc ticket → tra đơn và tracking → áp chính sách → ghi sổ cái → ghi lỗi hãng → trả lời khách phải để lại **kết quả đúng ở thế giới bên ngoài**: tiền hoàn trên sổ cái đúng chính sách đang hiệu lực (`REFUND-v3`) và khớp với số tiền nói trong câu trả lời cho khách; lỗi chỉ được ghi cho hãng khi có nguyên nhân `CARRIER` đã ghi nhận; và mọi ca vượt trần đã thống nhất với Ops và Finance (`ops_limits`: quá 300.000đ/khách/ngày, quá ngân sách hoàn tự động 2.000.000đ/ngày, từ lỗi thứ 3 của cùng một hãng trong ngày) đều được chuyển cho người duyệt, **không có ca nào lách qua phê duyệt**.
+>
+> Dựa vào PRD v1.1 §3: mục tiêu này gom các chỉ số chặn release `approval_bypass = 0`, `refund_amount_correct`, `reply_matches_ledger` thành một kết quả của cả hệ thống, không chỉ của model. Model có thể "trả lời đúng" mà hệ thống vẫn gây hại, ví dụ hoàn đúng số tiền nhưng ghi oan lỗi cho một hãng nhỏ như GHSH (bị treo sau 3 lỗi trong 7 ngày), hoặc hoàn tự động vượt ngân sách ngày của Finance.
 
 ### Câu 1.2 · Mục tiêu nhìn từ hai người
 
