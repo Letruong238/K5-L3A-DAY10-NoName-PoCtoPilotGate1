@@ -24,23 +24,32 @@ Ghi `members` trong `submission/submission.json` theo dạng `"HoVaTen-MSSV"`, k
 
 Mỗi thành viên tự viết một mục bên dưới (chép mẫu, đổi tiêu đề thành họ tên không dấu và MSSV, ví dụ `## NguyenVanAn-20241234`).
 
-## HoVaTen-MSSV
+## LeQuangTruong-2A202603663
 
 ### Phần việc phụ trách
 
-Vai trong bàn; câu nào của đề, mục nào của phiếu A/B/C, file nào (`lab10/guards.py`, `config/operating_gates.json`, …).
+Vai **Sản phẩm và kinh doanh**, trưởng nhóm. Phút 0–15: tạo repo, gắn `upstream`, điền bảng thành viên, chọn eval card và PRD v1.1 từ Lab 9 của mình làm bản chung (`evalcard&PRDv1.1.md`). Khối 1: câu 1.1, 1.5, 1.6 và ký tiêu chí (Phiếu A mục A1, A3, A4, A5; `config/acceptance_criteria.json`). Khối 2: câu 2.3 (Phiếu B mục B3), câu 2.9 (Phiếu B mục B7.4; `config/operating_gates.json` mục `business`). Khối 3: ghi thẻ S7, câu 3.0 (Phiếu C mục C0, C1), câu 3.2 (C5), câu 3.4 (C6), câu 3.5 phần `business` và tổng hợp bảng sửa (C7), quyết định Gate 1 v2 và ba dòng bắt buộc (C12).
 
 ### Đóng góp cụ thể
 
-...
+- **Tiêu chí ký trước khi đo:** viết mục tiêu cấp hệ thống từ PRD v1.1 §3 (tiền đúng chính sách và khớp câu trả lời, không ghi lỗi oan cho hãng, không lách phê duyệt); đọc khoảng tin cậy câu 1.5 (chọn (b)); viết 6 câu "Nếu … thì chúng tôi sẽ …", hai câu ranh giới đầu ra, bảng soát bốn câu hỏi. Chọn ngưỡng từ PRD Lab 9 và `data/world.json`, không chép file example: `pass_rate_min` 0,9; `pass_k_min` 0,8; ba chỉ số an toàn bằng 0; `escalation_rate_max` 0,25; `cost_per_ticket_vnd_max` 6.000đ; `roi_min` 0,5; `queue_stuck_max` 0; cùng `stop_condition` và bốn dòng `decision_rule`. Ký và push trước lần đánh giá đầu tiên.
+- **Bản đồ dữ liệu (B3):** chỉ ra trường nguồn sự thật và bản sao (độ trễ tính từ `delivered_date − promised_date`, số ngày khách kể chỉ là lời kể; `index_active` là bản sao); ví dụ drift `REFUND-v3 → REFUND-v4` ngày 01/12/2026 là quan hệ vào–ra đổi, minh hoạ bằng `T-002` (tracking trễ 2 ngày: v3 từ chối, v4 phải hoàn).
+- **Cổng kinh doanh (B7.4):** trần hoàn tự động 800.000đ/ngày (2/5 ngân sách Finance 2.000.000đ cho 2 kho pilot), ngân sách LLM 1.500đ/ticket (đúng `ops_limits`), `roi_min` 0,5, phạm vi HN + HCM ở vòng 1.
+- **Vòng 2, thẻ S7:** đo mốc prepared và phát hiện cổng vòng 1 chặn 30/30 lần lộ nhưng **2 ticket kho DN, CT bị che** bởi `pilot_scope` chứ không phải đã sửa, và chi phí 6.434đ vượt ngưỡng đã ký. Viết SPEC-S7 (kênh gửi hãng chỉ cho đi 4 trường trong `carrier_notice_fields`, giá trị lấy từ dữ liệu hệ thống), phân biệt **ngăn** (allowlist) với **giảm** (dò mẫu số điện thoại), và tìm ra khe hở "nhét dữ liệu vào khoá hợp lệ". Vẽ fault tree 5 lá ở 4 tầng. Đổi `business.pilot_scope` về tất cả kho: độ phủ S7 0,75 → 1,0, chi phí 6.434đ → 5.005đ, ROI 0,55 → 1,0, bộ nền không ca nào hỏng.
+- **Quyết định:** v2 đổi từ Thu hẹp (v1) sang **Tiếp tục có điều kiện**, khớp dòng "Tiếp tục" của `decision_rule` đã ký; viết ba dòng bắt buộc.
+- **Giữ tính toàn vẹn bài nộp:** phát hiện commit "2.4" vô tình đổi ký tự xuống dòng của `config/acceptance_criteria.json` (hash lệch `3631fb42` so với bản ký `9e43a50e`); thử hai cách trên bản sao, chọn viết lại lịch sử sau commit ký rồi force push có điều kiện, sau đó kiểm `lab10.criteria` báo "tiêu chí giữ nguyên từ commit 'Sign acceptance criteria'". Lấy đủ thẻ S1–S8 và đối chiếu 32/32 file với `lab10/MANIFEST.json` để dòng integrity qua (bàn chỉ mở và làm thẻ S7).
 
 ### Bằng chứng
 
-Mã commit, mã lần chạy (`runs/<mã>`), dòng trong phiếu.
+- Commit: `f53b30d` (bảng thành viên, link Lab 9), `bd9ff5f` (câu 1.1), `2504eb4` (**Sign acceptance criteria**, hash tiêu chí `9e43a50e`), `937dfcb` (Phiếu A mục A1–A5), `0dbc2d5` (câu 2.3), `6e8f8c4` (câu 2.9), `a5c09eb` (thẻ S7, C0, C1), `32e7ee9` (C5 câu 3.2), `f70c3d2` (đủ thẻ S1–S8), `ef49bf0` (vòng 2: cổng `notify_carrier`, `pilot_scope`, ops/legal; C6, C7), commit C12.
+- Lần chạy: S7 prepared `R-S7-prepared-20261118-172454-0f72f4`; sau khi sửa `R-S7-after-20261118-172913-5940b3` (code), `R-S7-after-20261118-172924-ce259f` (`pilot_scope`), `R-S7-after-20261118-172950-5029fa` (ops/legal); bộ nền `R-base-after-20261118-172950-5029fa`; tự kiểm tra `R-S7-grade-20261118-174454-d43ead` (**PASS-VISIBLE**, cả 5 dòng ✅).
+- Dòng trong phiếu: Phiếu A mục A1 (câu 1.1), A3, A4, A5; Phiếu B mục B3, B7.4; Phiếu C dòng `Thẻ đã bốc`, C0 dòng 1–5, C1, C5 (câu 3.2), C6, C7, C12.
+- Dùng AI: có dùng Claude Code để đọc đề, code và dữ liệu, chạy lệnh, soạn nháp câu trả lời và xử lý lỗi Git. Mọi ngưỡng, con số và quyết định tôi đã đối chiếu lại với report và trace, và giải thích được lúc demo.
 
 ### Exit ticket
 
-Một điều học được, một điều còn chưa chắc.
+- Một điều học được: viết ngưỡng **trước** khi xem số thì quyết định mới không bị kéo theo kết quả; và "thu hẹp phạm vi" không phải lúc nào cũng an toàn hơn: ở thẻ S7, thu hẹp về HN + HCM vừa che mất lỗi ở kho DN vừa làm chi phí mỗi ticket vượt ngưỡng đã ký.
+- Một điều còn chưa chắc: quyết định "Tiếp tục" dựa trên bộ thử mock 8 ticket và MockLLM tất định; tôi chưa chắc cổng còn đứng được trước bài kiểm tra ẩn, trước LLM thật, và khi chính dữ liệu nguồn (`district`, `delay_cause`) bị nhập sai.
 
 ## MaiVanThanh-2A202603696
 
