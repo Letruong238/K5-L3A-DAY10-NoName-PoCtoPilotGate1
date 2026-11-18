@@ -279,9 +279,16 @@ Kiểm bằng gì (hàm trong `guards.py`, dòng report nào):
 
 ### Câu 3.3 · Một giả định về môi trường mà người thiết kế đã ngầm tin, nhưng nhiều khả năng sai ngoài thực tế
 
-Giả định (thứ nằm NGOÀI phần mềm): …
+Giả định (thứ nằm NGOÀI phần mềm):
+> Người thiết kế đã ngầm tin ba điều về thế giới bên ngoài phần mềm:
+> 1. **Về người nhận quà và sự đồng ý (consent):** Người đặt hàng (`customer`) và người nhận hàng (`recipient`) là một hoặc có cùng mong muốn, nên người nhận quà sẽ vui vẻ chấp nhận việc nhân viên hãng vận chuyển có số điện thoại/địa chỉ của mình và gọi điện trực tiếp để *"xin lỗi vì giao trễ"* (thể hiện rõ ở comment trong `lab10/agent.py` dòng 203: `# "so the carrier can apologise to the recipient"` khi `is_gift = true`).
+> 2. **Về hành vi gõ ticket của khách đặt hàng:** Ô nội dung khiếu nại (`ticket.text`) chỉ chứa mô tả sự việc giao trễ của chính chủ đơn, không chứa dữ liệu cá nhân (tên, SĐT, địa chỉ nhà) của một người thứ ba.
+> 3. **Về hành vi của nhân viên hãng vận chuyển:** Khi nhận bản tin báo lỗi (`notify_carrier`), điều phối viên và tài xế hãng (`GHSH`, `VNX`, `DNB`) chỉ dùng thông tin đó để đối soát nội bộ chứ không tự ý lấy SĐT trong thông báo để gọi điện trực tiếp cho người nhận hàng.
 
-Vì sao có thể sai: …
+Vì sao có thể sai:
+> - **Người nhận quà là bên thứ ba không có quan hệ hợp đồng với LogiX:** Ở các đơn quà mừng thọ, sinh nhật, tặng mẹ, biếu sếp (`S7-01…S7-04`, `S7-06`, `S7-20`, `S7-21`), người nhận (bà Nguyễn Thị Tâm `O-2701`, ông Đoàn Văn Phúc `O-2720`, sếp của khách ở `O-2721`, bà Lê Thị Hòa `O-2703`) không dùng app LogiX, không mở ticket và **chưa từng đồng ý** cung cấp SĐT cho hãng vận chuyển để giải quyết khiếu nại; việc bị người lạ gọi điện đọc đúng tên và địa chỉ nhà riêng gây hoang mang, phiền hà (nhất là đơn quà biếu sếp `S7-21` hoặc mừng thọ `S7-01`) và vi phạm quy định bảo vệ dữ liệu cá nhân cũng như hợp đồng chia sẻ dữ liệu (chỉ cho phép 4 trường `order_id`, `parcel_id`, `district`, `delay_days`).
+> - **Khách đặt hàng thường gõ kèm PII của người nhận vào lời nhắn tự do:** Khi lo quà giao muộn, khách đặt hàng có thói quen ghi luôn tên, SĐT (viết liền `0912345678` ở `S7-01`, `0905112233` ở `S7-03`, hoặc viết cách `0987 654 321` ở `S7-02`) và số nhà/hẻm (`14 ngõ 82 Chùa Láng`, `7 hẻm 51 Cao Thắng` ở `S7-04`) vào `ticket.text` vì mặc định đây là kênh hỗ trợ nội bộ của LogiX.
+> - **Động cơ thực tế của hãng vận chuyển và tài xế:** Mỗi lỗi ghi nhận (`file_carrier_fault`) làm hãng bị phạt `80.000đ–150.000đ` và hãng nhỏ (`GHSH`, `DNB`) bị treo sau `3 lỗi/7 ngày`; khi thấy tên, SĐT và địa chỉ người nhận nằm sẵn trong thông báo lỗi, nhân viên/tài xế hãng có động cơ rất lớn để gọi thẳng cho người nhận nhằm xin lỗi, xác minh hoặc năn nỉ bỏ khiếu nại — biến dữ liệu rò rỉ trong payload thành cuộc gọi làm phiền ngoài đời thực.
 
 ---
 
